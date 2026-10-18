@@ -1,0 +1,22 @@
+export const CONFIG = Object.freeze({
+  duration: 30,
+  points: 10,
+  minSpeed: 0.25,
+  maxSpeed: 0.45,
+  fastSpeed: 0.6,
+  changeMin: 0.7,
+  changeMax: 2,
+  pauseMin: 0.1,
+  pauseMax: 0.4,
+  hitRadius: 0.165,
+  targetZ: 1,
+  gravity: 3.8,
+  minDepthSpeed: 0.65,
+  maxDepthSpeed: 2.05,
+  throwSensitivity: 1,
+  effectDuration: 0.65,
+  bgmVolume: 0.2,
+  sfxVolume: 0.13,
+  reload: 0.22,
+});
+export const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
