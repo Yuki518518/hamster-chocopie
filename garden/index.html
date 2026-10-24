@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#fff9f3" />
+    <meta
+      name="description"
+      content="あっちゃんを左右のボタンで動かして、お庭に降ってくるおやつをキャッチ！いちごとチョコパイを集めて、青魚はよけよう。"
+    />
+    <title>あっちゃんのおやつキャッチ</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="../assets/images/strawberry.svg"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="garden-shell">
+      <header>
+        <a class="home-link" href="../">← ホーム</a
+        ><span class="brand">あっちゃんのお庭</span
+        ><button id="sound" aria-label="音声を切り替える" aria-pressed="true">
+          ♪ ON
+        </button>
+      </header>
+      <section class="game-area">
+        <div class="statusbar" id="hud" aria-label="スコアと残り時間">
+          <div><span>SCORE</span><strong id="score">000</strong></div>
+          <div class="best"><span>BEST</span><b id="best">000</b></div>
+          <div class="time"><span>TIME</span><strong id="time">30</strong></div>
+        </div>
+        <section class="world" aria-label="おやつが降ってくるお庭">
+          <canvas
+            id="garden"
+            aria-label="あっちゃんを左右ボタンで動かし、いちごとチョコパイを集めて青魚を避けます。"
+          ></canvas
+          ><button id="pause" aria-label="一時停止">Ⅱ</button>
+          <p id="play-hint">いちごをキャッチ、おさかなはよけてね</p>
+        </section>
+        <section class="controls" aria-label="移動ボタン">
+          <div class="buttons">
+            <button id="left" class="move" aria-label="左へ移動" disabled>
+              <span aria-hidden="true">←</span><small>ひだり</small></button
+            ><button id="right" class="move" aria-label="右へ移動" disabled>
+              <span aria-hidden="true">→</span><small>みぎ</small>
+            </button>
+          </div>
+          <p>おしたまま移動 ・ はなすとストップ</p>
+        </section>
+        <section id="title" class="screen title-screen">
+          <p class="eyebrow">NEW MODE · A LITTLE GARDEN</p>
+          <h1>あっちゃんの<br /><em>おやつキャッチ</em></h1>
+          <p class="subtitle">いちご、いっぱい食べたいな。</p>
+          <div class="title-hero">
+            <span class="hero-heart">♡</span
+            ><img
+              class="hero-berry"
+              src="./assets/strawberry.webp"
+              alt=""
+            /><img
+              class="hero-hamster"
+              src="./assets/hamster-idle.webp"
+              alt="お庭で待っているあっちゃん"
+            /><img class="hero-pie" src="./assets/chocopie.webp" alt="" />
+          </div>
+          <div class="legend" aria-label="得点">
+            <span
+              ><img src="./assets/strawberry.webp" alt="いちご" /><b
+                >+10</b
+              ></span
+            ><span
+              ><img src="./assets/chocopie.webp" alt="三角チョコパイ" /><b
+                >+50</b
+              ></span
+            ><span><img src="./assets/fish.webp" alt="青魚" /><b>−50</b></span>
+          </div>
+          <button id="start" class="primary" disabled>おやつを準備中…</button>
+          <p class="howto">
+            左右のボタンで、おやつをキャッチ！<small
+              >30秒で、いくつ食べられるかな？</small
+            >
+          </p>
+          <p class="title-best">YOUR BEST <b id="title-best">000</b></p>
+        </section>
+        <section id="paused" class="screen modal" hidden>
+          <div class="card">
+            <p class="eyebrow">TAKE A LITTLE BREAK</p>
+            <h2>ひとやすみ ♡</h2>
+            <img class="card-hamster" src="./assets/hamster-idle.webp" alt="" />
+            <p>お庭で、待ってるよ。</p>
+            <button id="resume" class="primary">つづける</button
+            ><button id="back-title" class="secondary">お庭のタイトルへ</button>
+          </div>
+        </section>
+        <section id="result" class="screen modal" hidden>
+          <div class="card result-card">
+            <p class="eyebrow">THANK YOU FOR THE TREATS!</p>
+            <h2>おなかいっぱいっ！<span>♡</span></h2>
+            <img
+              class="card-hamster"
+              src="./assets/hamster-idle.webp"
+              alt="おやつを食べたあっちゃん"
+            />
+            <div class="result-score">
+              <span>SCORE</span><strong id="result-score">0</strong
+              ><small>点</small>
+            </div>
+            <p id="record">
+              <span id="record-label">BEST</span> <b id="result-best">000</b>
+            </p>
+            <p id="result-counts" class="result-counts"></p>
+            <p id="result-message"></p>
+            <button id="retry" class="primary">もういっかい！</button
+            ><button id="share" class="secondary">結果をシェア ↗</button
+            ><button id="result-title" class="text-button">
+              お庭のタイトルへ
+            </button>
+          </div>
+        </section>
+        <p id="toast" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

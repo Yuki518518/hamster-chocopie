@@ -49,6 +49,9 @@ function sync(tick = false) {
   $("time").parentElement.classList.toggle("urgent", game.remaining <= 5);
   $("hint").hidden = state !== "PLAYING" || game.elapsed > 5 || game.ending;
   if (tick) return;
+  document
+    .querySelector(".shell")
+    .classList.toggle("is-home", state === "TITLE");
   if (state === "RESULT" && oldState !== "RESULT") {
     newBest = game.score > best;
     if (newBest) {

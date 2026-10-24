@@ -272,6 +272,55 @@ h1 > span:first-child {
   color: #85624e;
   margin-left: 8px;
 }
+.new-mode-link {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  translate: -50% 0;
+  width: calc(100% - 48px);
+  max-width: 300px;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #d9bba4;
+  border-radius: 15px;
+  background: #fff4e6;
+  color: #78573f;
+  font-size: 12px;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+.new-mode-link span {
+  font-size: 9px;
+  color: #73916d;
+  letter-spacing: 0.12em;
+}
+.new-mode-link:focus-visible {
+  outline: 3px solid #af7259;
+  outline-offset: 3px;
+}
+@media (max-height: 800px) {
+  body:has(.shell.is-home) {
+    overflow-y: auto;
+    display: block;
+  }
+  .shell.is-home {
+    height: calc(100dvh + 54px);
+    max-height: none;
+    margin-inline: auto;
+  }
+  .shell.is-home .stage {
+    overflow: visible;
+  }
+  .shell.is-home footer {
+    margin-top: 54px;
+  }
+  .new-mode-link {
+    bottom: -48px;
+  }
+}
 footer {
   height: 32px;
   flex-shrink: 0;
