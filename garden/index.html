@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#fff9f3" />
     <meta
       name="description"
-      content="あっちゃんを左右のボタンで動かして、お庭に降ってくるおやつをキャッチ！いちごとチョコパイを集めて、青魚はよけよう。"
+      content="指を左右にスライドして、お庭に降ってくるおやつをキャッチ！いちごとチョコパイを集めて、青魚はよけよう。"
     />
     <title>あっちゃんのおやつキャッチ</title>
     <link
@@ -17,7 +17,7 @@
       type="image/svg+xml"
       href="../assets/images/strawberry.svg"
     />
-    <link rel="stylesheet" href="./styles.css?v=20261025-2" />
+    <link rel="stylesheet" href="./styles.css?v=20261025-3" />
   </head>
   <body>
     <main class="garden-shell">
@@ -40,20 +40,31 @@
         <section class="world" aria-label="おやつが降ってくるお庭">
           <canvas
             id="garden"
-            aria-label="あっちゃんを左右ボタンで動かし、いちごとチョコパイを集めて青魚を避けます。"
+            aria-label="下のパッドで指を左右にスライドして移動、中央で停止。いちごとチョコパイを集めて青魚を避けます。"
           ></canvas
           ><button id="pause" aria-label="一時停止">Ⅱ</button>
           <p id="play-hint">いちごをキャッチ、おさかなはよけてね</p>
         </section>
-        <section class="controls" aria-label="移動ボタン">
-          <div class="buttons">
+        <section class="controls" aria-label="指をスライドして移動するパッド">
+          <div
+            class="buttons"
+            role="group"
+            aria-label="左で左移動、中央で停止、右で右移動"
+          >
             <button id="left" class="move" aria-label="左へ移動" disabled>
               <span aria-hidden="true">←</span><small>ひだり</small></button
+            ><button
+              id="stop"
+              class="move stop"
+              aria-label="中央で停止"
+              disabled
+            >
+              <span aria-hidden="true">Ⅱ</span><small>とまる</small></button
             ><button id="right" class="move" aria-label="右へ移動" disabled>
               <span aria-hidden="true">→</span><small>みぎ</small>
             </button>
           </div>
-          <p>おしたまま移動 ・ はなすとストップ</p>
+          <p>指をおいたまま左右にスライド ・ まんなかでストップ</p>
         </section>
         <section id="title" class="screen title-screen">
           <p class="eyebrow">NEW MODE · A LITTLE GARDEN</p>
@@ -94,12 +105,15 @@
               <button type="button" data-level="storm" aria-pressed="false">
                 おやつの嵐
               </button>
+              <button type="button" data-level="flood" aria-pressed="false">
+                おやつ大洪水
+              </button>
             </div>
             <p id="level-note">いつもの速さで、のんびりおやつ時間。</p>
           </fieldset>
           <button id="start" class="primary" disabled>おやつを準備中…</button>
           <p class="howto">
-            左右のボタンで、おやつをキャッチ！<small
+            指を左右にスライドして、キャッチ！<small
               >30秒で、いくつ食べられるかな？</small
             >
           </p>
@@ -144,6 +158,6 @@
         <p id="toast" role="status" aria-live="polite"></p>
       </section>
     </main>
-    <script type="module" src="./main.js?v=20261025-2"></script>
+    <script type="module" src="./main.js?v=20261025-3"></script>
   </body>
 </html>

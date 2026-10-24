@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { GardenModel } from "../garden/model.js";
+import { LEVELS, ITEMS } from "../garden/config.js";
 const item = (game, type, x = game.playerX) => ({
   type,
   x,
@@ -167,4 +168,51 @@ test("リトライは選んだ難易度を保ち、不明な値はのんびり�
   assert.equal(game.level, "storm");
   game.start("missing");
   assert.equal(game.level, "gentle");
+});
+
+test("大洪水は嵐と同じ落下速度・魚の割合で、30秒の出現量が約2.5倍", () => {
+  for (const key of [
+    "fallStart",
+    "fallEnd",
+    "fishChance",
+    "fastChance",
+    "fastMin",
+    "fastMax",
+  ])
+    assert.equal(LEVELS.flood[key], LEVELS.storm[key]);
+  for (const fps of [30, 60, 120]) {
+    const totals = [];
+    for (const level of ["storm", "flood"]) {
+      const game = new GardenModel(() => 0.5);
+      game.start(level);
+      const spawn = game.spawn.bind(game);
+      let total = 0;
+      game.spawn = (...args) => {
+        total++;
+        spawn(...args);
+      };
+      for (let n = 0; n < fps * 30; n++) game.update(1 / fps, 0);
+      assert.equal(game.state, "RESULT");
+      totals.push(total);
+    }
+    assert.ok(
+      totals[1] / totals[0] > 2.4 && totals[1] / totals[0] < 2.6,
+      String(totals),
+    );
+  }
+});
+
+test("魚の画像を見やすくしても、判定の半径は従来のまま", () => {
+  assert.equal(ITEMS.fish.size, 0.13);
+  assert.equal(ITEMS.fish.hitSize, 0.095);
+  for (const [offset, score] of [
+    [0.083, -50],
+    [0.088, 0],
+  ]) {
+    const game = new GardenModel();
+    game.start();
+    game.items = [item(game, "fish", game.playerX + offset)];
+    game.update(0.05, 0);
+    assert.equal(game.score, score);
+  }
 });

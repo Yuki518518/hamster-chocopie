@@ -1,4 +1,4 @@
-import { GARDEN as C, ITEMS } from "./config.js?v=20261025-2";
+import { GARDEN as C, ITEMS } from "./config.js?v=20261025-3";
 
 export async function loadAssets() {
   const entries = [

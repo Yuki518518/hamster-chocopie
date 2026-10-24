@@ -173,7 +173,7 @@ header {
 }
 .level-buttons {
   display: flex;
-  gap: 5px;
+  gap: 4px;
 }
 .level-buttons button {
   flex: 1;
@@ -181,8 +181,10 @@ header {
   border: 1px solid #dbc7ad;
   border-radius: 14px;
   background: #fffbf4e8;
-  font-size: 11px;
+  font-size: clamp(8.5px, 2.55vw, 10px);
   padding: 5px 3px;
+  white-space: nowrap;
+  min-width: 0;
 }
 .level-buttons button[aria-pressed="true"] {
   background: #e4eccf;
@@ -256,16 +258,23 @@ canvas {
 }
 .buttons {
   display: flex;
-  justify-content: center;
-  gap: 22px;
-}
-.move {
-  width: min(43%, 155px);
-  height: 75px;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+  gap: 0;
+  overflow: hidden;
   border: 1px solid #dfb79e;
   border-bottom: 4px solid #ce8797;
-  border-radius: 23px;
+  border-radius: 24px;
   background: #f6c0ca;
+}
+.move {
+  flex: 1;
+  min-width: 0;
+  height: 75px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -274,6 +283,15 @@ canvas {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+}
+.move + .move {
+  border-left: 1px solid #dfb79e;
+}
+.move.stop {
+  background: #fff3e6;
+}
+.move:active {
+  translate: none;
 }
 .move > span {
   font-size: 30px;
@@ -287,9 +305,10 @@ canvas {
 }
 .move.held {
   background: #eaa5b5;
-  border-bottom-width: 1px;
-  translate: 0 3px;
   box-shadow: inset 0 2px 5px #b777851c;
+}
+.move.stop.held {
+  background: #e4eccf;
 }
 .move:disabled {
   opacity: 0.5;
@@ -751,12 +770,10 @@ h2 span {
     padding-top: 5px;
   }
   .buttons {
-    gap: 80px;
+    border-radius: 16px;
   }
   .move {
     height: 51px;
-    width: 145px;
-    border-radius: 15px;
     flex-direction: row;
     gap: 12px;
   }
@@ -918,7 +935,6 @@ h2 span {
   }
   .level-buttons button {
     min-height: 37px;
-    font-size: 10px;
     border-radius: 12px;
   }
   #level-note {

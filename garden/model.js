@@ -4,7 +4,7 @@ import {
   LEVELS,
   validLevel,
   clamp,
-} from "./config.js?v=20261025-2";
+} from "./config.js?v=20261025-3";
 
 export class GardenModel {
   constructor(random = Math.random) {
@@ -126,7 +126,7 @@ export class GardenModel {
         const to = oldX + (this.playerX - oldX) * exited - item.x;
         const radius =
           this.playerWidth * 0.36 +
-          ITEMS[item.type].size * 0.25 +
+          (ITEMS[item.type].hitSize ?? ITEMS[item.type].size) * 0.25 +
           (food ? C.foodHitBonus : 0);
         if (Math.min(from, to) <= radius && Math.max(from, to) >= -radius) {
           item.caught = true;

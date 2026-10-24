@@ -1,8 +1,8 @@
-import { GardenModel } from "./model.js?v=20261025-2";
-import { HoldControls } from "./input.js?v=20261025-2";
-import { GardenSound } from "./audio.js?v=20261025-2";
-import { loadAssets, GardenRenderer } from "./renderer.js?v=20261025-2";
-import { LEVELS, validLevel } from "./config.js?v=20261025-2";
+import { GardenModel } from "./model.js?v=20261025-3";
+import { SlideControls } from "./input.js?v=20261025-3";
+import { GardenSound } from "./audio.js?v=20261025-3";
+import { loadAssets, GardenRenderer } from "./renderer.js?v=20261025-3";
+import { LEVELS, validLevel } from "./config.js?v=20261025-3";
 
 const $ = (id) => document.getElementById(id);
 const store = {
@@ -20,7 +20,7 @@ const store = {
   },
 };
 const model = new GardenModel();
-const controls = new HoldControls($("left"), $("right"));
+const controls = new SlideControls($("left"), $("stop"), $("right"));
 const sound = new GardenSound(store.get("ac-sound", "on") !== "off");
 let renderer,
   last = performance.now(),

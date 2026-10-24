@@ -52,6 +52,18 @@ export const LEVELS = Object.freeze({
     fastMin: 1.35,
     fastMax: 1.6,
   }),
+  flood: Object.freeze({
+    label: "おやつ大洪水",
+    description: "嵐と同じ速さで、量は約2.5倍！大いそがし。",
+    fallStart: 0.57,
+    fallEnd: 0.8,
+    spawnStart: 0.18,
+    spawnEnd: 0.116,
+    fishChance: 0.28,
+    fastChance: 0.34,
+    fastMin: 1.35,
+    fastMax: 1.6,
+  }),
 });
 export const validLevel = (level) =>
   Object.hasOwn(LEVELS, level) ? level : "gentle";
@@ -72,7 +84,8 @@ export const ITEMS = Object.freeze({
   },
   fish: {
     points: -50,
-    size: 0.095,
+    size: 0.13,
+    hitSize: 0.095,
     ratio: 0.6,
     label: "おさかな",
     weight: 0.18,

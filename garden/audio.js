@@ -1,4 +1,4 @@
-import { GARDEN as C } from "./config.js?v=20261025-2";
+import { GARDEN as C } from "./config.js?v=20261025-3";
 
 export class GardenSound {
   constructor(enabled) {

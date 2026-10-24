@@ -1,6 +1,6 @@
-export class HoldControls {
-  constructor(left, right) {
-    this.buttons = [left, right];
+export class SlideControls {
+  constructor(left, stop, right) {
+    this.buttons = [left, stop, right];
     this.pad = left.parentElement;
     this.pointers = new Map();
     this.keys = new Map();
@@ -14,7 +14,7 @@ export class HoldControls {
       const selection = window.getSelection?.();
       if (selection && !selection.isCollapsed) selection.removeAllRanges();
     };
-    const directionAt = (x, y, previous = 0) => {
+    const directionAt = (x, y) => {
       const pad = this.pad.getBoundingClientRect();
       if (
         y < pad.top - 14 ||
@@ -22,16 +22,13 @@ export class HoldControls {
         x < pad.left - 14 ||
         x > pad.right + 14
       )
-        return 0;
-      const l = left.getBoundingClientRect(),
-        r = right.getBoundingClientRect();
-      if (x <= l.right + 4) return -1;
-      if (x >= r.left - 4) return 1;
-      return previous || (x < (l.right + r.left) / 2 ? -1 : 1);
+        return null;
+      const position = (x - pad.left) / pad.width;
+      return position < 1 / 3 ? -1 : position < 2 / 3 ? 0 : 1;
     };
     const press = (id, x, y) => {
       const direction = directionAt(x, y);
-      if (!direction) return;
+      if (direction === null) return;
       this.pointers.set(id, { direction, order: ++this.order });
       clearSelection();
       this.paint();
@@ -39,7 +36,7 @@ export class HoldControls {
     const move = (id, x, y) => {
       const held = this.pointers.get(id);
       if (!held) return;
-      const direction = directionAt(x, y, held.direction);
+      const direction = directionAt(x, y) ?? 0;
       if (held.direction !== direction) {
         held.direction = direction;
         held.order = ++this.order;
@@ -164,13 +161,16 @@ export class HoldControls {
     if (!this.enabled) return 0;
     let latest = { direction: 0, order: -1 };
     for (const value of [...this.pointers.values(), ...this.keys.values()])
-      if (value.direction && value.order > latest.order) latest = value;
+      if (value.order > latest.order) latest = value;
     return latest.direction;
   }
   paint() {
     const axis = this.axis;
-    this.buttons[0].classList.toggle("held", axis === -1);
-    this.buttons[1].classList.toggle("held", axis === 1);
+    this.buttons.forEach((button, index) => {
+      const active = this.enabled && axis === index - 1;
+      button.classList.toggle("held", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
   }
   reset() {
     const ids = [...this.pointers.keys()];
@@ -192,5 +192,6 @@ export class HoldControls {
     this.buttons.forEach((button) => {
       button.disabled = !value;
     });
+    this.paint();
   }
 }
