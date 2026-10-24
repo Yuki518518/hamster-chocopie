@@ -9,6 +9,26 @@
 * {
   box-sizing: border-box;
 }
+.garden-shell,
+.garden-shell * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.garden-shell img {
+  -webkit-user-drag: none;
+}
+.controls,
+.controls * {
+  touch-action: none !important;
+}
+.move {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.move > * {
+  pointer-events: none;
+}
 html,
 body {
   margin: 0;
@@ -126,6 +146,57 @@ header {
   font-size: 15px;
   color: #ab8975;
   margin-top: 5px;
+}
+#level-name {
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  margin-top: 3px;
+  color: #8a966e;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.difficulty-choice {
+  border: 0;
+  padding: 0;
+  margin: 0 0 12px;
+  width: 100%;
+  max-width: 310px;
+  flex-shrink: 0;
+}
+.level-buttons {
+  display: flex;
+  gap: 5px;
+}
+.level-buttons button {
+  flex: 1;
+  min-height: 42px;
+  border: 1px solid #dbc7ad;
+  border-radius: 14px;
+  background: #fffbf4e8;
+  font-size: 11px;
+  padding: 5px 3px;
+}
+.level-buttons button[aria-pressed="true"] {
+  background: #e4eccf;
+  border-color: #9bab80;
+  color: #52633e;
+}
+#level-note {
+  font-size: 9px;
+  line-height: 1.5;
+  margin: 6px 0 0;
+  color: #89745e;
+  background: #fff9f3b8;
+  border-radius: 7px;
+  padding: 3px;
 }
 .statusbar .time {
   text-align: right;
@@ -839,5 +910,86 @@ h2 span {
     background: #fff9f3dc;
     padding: 4px 10px;
     border-radius: 12px;
+  }
+}
+@media (max-height: 740px) {
+  .difficulty-choice {
+    margin-bottom: 9px;
+  }
+  .level-buttons button {
+    min-height: 37px;
+    font-size: 10px;
+    border-radius: 12px;
+  }
+  #level-note {
+    font-size: 8px;
+    margin-top: 4px;
+  }
+  .title-screen .legend {
+    margin-bottom: 10px;
+  }
+}
+@media (max-height: 620px) and (orientation: portrait) {
+  .title-screen {
+    padding-top: 9px;
+  }
+  .title-screen .title-hero {
+    min-height: 45px;
+  }
+  .title-screen .hero-hamster {
+    width: 95px;
+  }
+  .title-screen .legend {
+    padding-block: 5px;
+    margin: 3px 0 8px;
+  }
+  .difficulty-choice {
+    margin-bottom: 7px;
+  }
+  .level-buttons button {
+    min-height: 35px;
+  }
+  .title-screen h1 {
+    font-size: 20px;
+  }
+  .title-screen h1 em {
+    font-size: 23px;
+  }
+  .title-screen .howto {
+    padding: 2px 7px;
+    margin-top: 6px;
+  }
+}
+@media (orientation: landscape) and (max-height: 550px) {
+  .title-screen {
+    grid-template-rows: auto auto auto auto auto auto;
+  }
+  .title-screen .difficulty-choice {
+    grid-column: 1;
+    grid-row: 4;
+    margin: 8px 0 0;
+    justify-self: center;
+  }
+  .title-screen .primary {
+    grid-column: 1;
+    grid-row: 5;
+    margin-top: 7px;
+    min-height: 44px;
+  }
+  .title-screen .howto {
+    grid-column: 1;
+    grid-row: 6;
+    margin-top: 5px;
+  }
+  .title-screen .title-hero {
+    grid-column: 2;
+    grid-row: 1/5;
+  }
+  .title-screen .legend {
+    grid-column: 2;
+    grid-row: 5;
+  }
+  .title-screen .level-buttons button {
+    min-height: 34px;
   }
 }

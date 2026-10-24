@@ -1,9 +1,16 @@
-import { GARDEN as C, ITEMS, clamp } from "./config.js";
+import {
+  GARDEN as C,
+  ITEMS,
+  LEVELS,
+  validLevel,
+  clamp,
+} from "./config.js?v=20261025-2";
 
 export class GardenModel {
   constructor(random = Math.random) {
     this.random = random;
     this.state = "TITLE";
+    this.level = "gentle";
     this.viewport(400, 600);
     this.reset();
   }
@@ -32,7 +39,8 @@ export class GardenModel {
     if (this.playerX != null)
       this.playerX = clamp(this.playerX, this.minX, this.maxX);
   }
-  start() {
+  start(level = this.level) {
+    this.level = validLevel(level);
     this.reset();
     this.state = "PLAYING";
   }
@@ -52,15 +60,24 @@ export class GardenModel {
     this.events = [];
   }
   spawn(forceType) {
+    const profile = LEVELS[this.level];
     const roll = this.random();
     const type =
       forceType ||
-      (roll < 0.72 ? "strawberry" : roll < 0.9 ? "fish" : "chocopie");
+      (roll < 0.9 - profile.fishChance
+        ? "strawberry"
+        : roll < 0.9
+          ? "fish"
+          : "chocopie");
     let lane = Math.floor(this.random() * 7);
     if (lane === this.lastLane)
       lane = (lane + 2 + Math.floor(this.random() * 4)) % 7;
     this.lastLane = lane;
     const progress = this.elapsed / C.duration;
+    const fast = this.random() < profile.fastChance;
+    const multiplier = fast
+      ? profile.fastMin + this.random() * (profile.fastMax - profile.fastMin)
+      : 0.94 + this.random() * 0.12;
     this.items.push({
       type,
       x: clamp(
@@ -70,8 +87,9 @@ export class GardenModel {
       ),
       y: -0.065,
       speed:
-        (C.fallStart + progress * (C.fallEnd - C.fallStart)) *
-        (0.94 + this.random() * 0.12),
+        (profile.fallStart + progress * (profile.fallEnd - profile.fallStart)) *
+        multiplier,
+      fast,
       angle: (this.random() - 0.5) * 0.25,
       spin: (this.random() - 0.5) * 0.6,
       checked: false,
@@ -98,16 +116,19 @@ export class GardenModel {
       const before = item.y;
       item.y += item.speed * dt;
       item.angle += item.spin * dt;
-      if (!item.checked && before <= this.catchY && item.y >= this.catchY) {
-        item.checked = true;
-        const fraction = clamp(
-          (this.catchY - before) / (item.y - before),
-          0,
-          1,
-        );
-        const atX = oldX + (this.playerX - oldX) * fraction;
-        const radius = this.playerWidth * 0.36 + ITEMS[item.type].size * 0.25;
-        if (Math.abs(item.x - atX) <= radius) {
+      const food = item.type !== "fish";
+      const top = this.catchY - (food ? C.foodCatchBefore : 0);
+      const bottom = this.catchY + (food ? C.foodCatchAfter : 0);
+      if (!item.checked && before <= bottom && item.y >= top) {
+        const entered = clamp((top - before) / (item.y - before), 0, 1);
+        const exited = clamp((bottom - before) / (item.y - before), 0, 1);
+        const from = oldX + (this.playerX - oldX) * entered - item.x;
+        const to = oldX + (this.playerX - oldX) * exited - item.x;
+        const radius =
+          this.playerWidth * 0.36 +
+          ITEMS[item.type].size * 0.25 +
+          (food ? C.foodHitBonus : 0);
+        if (Math.min(from, to) <= radius && Math.max(from, to) >= -radius) {
           item.caught = true;
           this.score += ITEMS[item.type].points;
           this.counts[item.type]++;
@@ -120,6 +141,7 @@ export class GardenModel {
           });
         }
       }
+      if (item.y > bottom) item.checked = true;
     }
     this.items = this.items.filter((item) => !item.caught && item.y < 1.1);
     this.nextSpawn -= dt;
@@ -128,8 +150,10 @@ export class GardenModel {
       if (special) this.nextPie += 8.5;
       this.spawn(special ? "chocopie" : undefined);
       this.nextSpawn +=
-        C.spawnStart +
-        ((C.spawnEnd - C.spawnStart) * this.elapsed) / C.duration;
+        LEVELS[this.level].spawnStart +
+        ((LEVELS[this.level].spawnEnd - LEVELS[this.level].spawnStart) *
+          this.elapsed) /
+          C.duration;
     }
     if (!this.remaining) {
       this.state = "RESULT";

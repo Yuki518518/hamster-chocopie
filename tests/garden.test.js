@@ -100,3 +100,71 @@ test("30・60・120fpsでも同じ移動距離と衝突得点", () => {
     assert.ok(Math.abs(game.playerX - 0.86) < 1e-8);
   }
 });
+
+test("いちごとパイだけ横の取りやすさを広げ、魚の判定は変えない", () => {
+  for (const [type, score] of [
+    ["strawberry", 10],
+    ["chocopie", 50],
+    ["fish", 0],
+  ]) {
+    const game = new GardenModel();
+    game.start();
+    game.items = [item(game, type, game.playerX + 0.095)];
+    game.update(0.05, 0);
+    assert.equal(game.score, score);
+  }
+});
+
+test("食べ物は体に重なる短い猶予でも取れるが、魚の判定面は延ばさない", () => {
+  for (const [type, score] of [
+    ["strawberry", 10],
+    ["chocopie", 50],
+    ["fish", 0],
+  ]) {
+    const game = new GardenModel();
+    game.start();
+    game.playerX = 0.4;
+    const food = item(game, type, 0.52);
+    food.y = game.catchY + 0.01;
+    food.speed = 0.2;
+    game.items = [food];
+    game.update(0.15, 1);
+    assert.equal(game.score, score);
+    game.update(0.2, 1);
+    assert.equal(game.score, score);
+  }
+});
+
+test("難易度ごとに落下速度・速い物の割合・魚の割合が段階的に増える", () => {
+  const samples = [];
+  for (const level of ["gentle", "peppy", "storm"]) {
+    let seed = 73;
+    const game = new GardenModel(() => {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    });
+    game.start(level);
+    for (let i = 0; i < 4000; i++) game.spawn();
+    samples.push({
+      speed:
+        game.items.reduce((sum, value) => sum + value.speed, 0) /
+        game.items.length,
+      fast: game.items.filter((i) => i.fast).length,
+      fish: game.items.filter((i) => i.type === "fish").length,
+    });
+  }
+  for (let i = 1; i < samples.length; i++) {
+    assert.ok(samples[i].speed > samples[i - 1].speed);
+    assert.ok(samples[i].fast > samples[i - 1].fast);
+    assert.ok(samples[i].fish > samples[i - 1].fish);
+  }
+});
+
+test("リトライは選んだ難易度を保ち、不明な値はのんびりに戻す", () => {
+  const game = new GardenModel();
+  game.start("storm");
+  game.start();
+  assert.equal(game.level, "storm");
+  game.start("missing");
+  assert.equal(game.level, "gentle");
+});

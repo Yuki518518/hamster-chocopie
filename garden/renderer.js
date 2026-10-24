@@ -1,4 +1,4 @@
-import { GARDEN as C, ITEMS } from "./config.js";
+import { GARDEN as C, ITEMS } from "./config.js?v=20261025-2";
 
 export async function loadAssets() {
   const entries = [
@@ -172,6 +172,12 @@ export class GardenRenderer {
       c.moveTo(x, y - size * 0.75);
       c.lineTo(x, y - size * 0.95);
       c.stroke();
+      if (item.fast) {
+        c.beginPath();
+        c.moveTo(x - size * 0.19, y - size * 0.9);
+        c.lineTo(x - size * 0.19, y - size * 1.3);
+        c.stroke();
+      }
       c.restore();
       if (item.type === "chocopie") {
         this.star(x - size * 0.63, y - 4, 3 + Math.sin(now * 5) * 0.5);
@@ -180,7 +186,7 @@ export class GardenRenderer {
       this.sprite(item.type, x, y, size, this.reduced ? 0 : item.angle);
     }
     const moving = game.state === "PLAYING" && game.direction !== 0;
-    const name = moving && !this.reaction ? "walk" : "idle";
+    const name = moving ? "walk" : "idle";
     const width = game.playerWidth * W,
       asset = this.assets[name];
     const height = (width * asset.crop[3]) / asset.crop[2];

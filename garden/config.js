@@ -11,7 +11,50 @@ export const GARDEN = Object.freeze({
   effectDuration: 0.65,
   bgmVolume: 0.2,
   sfxVolume: 0.13,
+  foodHitBonus: 0.018,
+  foodCatchBefore: 0.02,
+  foodCatchAfter: 0.045,
 });
+export const LEVELS = Object.freeze({
+  gentle: Object.freeze({
+    label: "のんびり",
+    description: "いつもの速さで、のんびりおやつ時間。",
+    fallStart: 0.38,
+    fallEnd: 0.56,
+    spawnStart: 0.62,
+    spawnEnd: 0.39,
+    fishChance: 0.18,
+    fastChance: 0.08,
+    fastMin: 1.18,
+    fastMax: 1.28,
+  }),
+  peppy: Object.freeze({
+    label: "ぱくぱく",
+    description: "ときどき速いおやつ。切り返しの出番！",
+    fallStart: 0.44,
+    fallEnd: 0.65,
+    spawnStart: 0.54,
+    spawnEnd: 0.34,
+    fishChance: 0.21,
+    fastChance: 0.27,
+    fastMin: 1.4,
+    fastMax: 1.6,
+  }),
+  storm: Object.freeze({
+    label: "おやつの嵐",
+    description: "ぜんぶ速め＋超特急！おさかなも多め。",
+    fallStart: 0.57,
+    fallEnd: 0.8,
+    spawnStart: 0.45,
+    spawnEnd: 0.29,
+    fishChance: 0.28,
+    fastChance: 0.34,
+    fastMin: 1.35,
+    fastMax: 1.6,
+  }),
+});
+export const validLevel = (level) =>
+  Object.hasOwn(LEVELS, level) ? level : "gentle";
 export const ITEMS = Object.freeze({
   strawberry: {
     points: 10,

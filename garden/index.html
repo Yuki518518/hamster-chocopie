@@ -17,7 +17,7 @@
       type="image/svg+xml"
       href="../assets/images/strawberry.svg"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20261025-2" />
   </head>
   <body>
     <main class="garden-shell">
@@ -31,7 +31,10 @@
       <section class="game-area">
         <div class="statusbar" id="hud" aria-label="スコアと残り時間">
           <div><span>SCORE</span><strong id="score">000</strong></div>
-          <div class="best"><span>BEST</span><b id="best">000</b></div>
+          <div class="best">
+            <span>BEST</span><b id="best">000</b
+            ><span id="level-name">のんびり</span>
+          </div>
           <div class="time"><span>TIME</span><strong id="time">30</strong></div>
         </div>
         <section class="world" aria-label="おやつが降ってくるお庭">
@@ -79,6 +82,21 @@
               ></span
             ><span><img src="./assets/fish.webp" alt="青魚" /><b>−50</b></span>
           </div>
+          <fieldset class="difficulty-choice">
+            <legend class="sr-only">おやつの難しさ</legend>
+            <div class="level-buttons">
+              <button type="button" data-level="gentle" aria-pressed="true">
+                のんびり
+              </button>
+              <button type="button" data-level="peppy" aria-pressed="false">
+                ぱくぱく
+              </button>
+              <button type="button" data-level="storm" aria-pressed="false">
+                おやつの嵐
+              </button>
+            </div>
+            <p id="level-note">いつもの速さで、のんびりおやつ時間。</p>
+          </fieldset>
           <button id="start" class="primary" disabled>おやつを準備中…</button>
           <p class="howto">
             左右のボタンで、おやつをキャッチ！<small
@@ -111,6 +129,7 @@
               ><small>点</small>
             </div>
             <p id="record">
+              <span id="result-level">のんびり</span> ·
               <span id="record-label">BEST</span> <b id="result-best">000</b>
             </p>
             <p id="result-counts" class="result-counts"></p>
@@ -125,6 +144,6 @@
         <p id="toast" role="status" aria-live="polite"></p>
       </section>
     </main>
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="./main.js?v=20261025-2"></script>
   </body>
 </html>

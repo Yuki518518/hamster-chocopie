@@ -1,7 +1,8 @@
-import { GardenModel } from "./model.js";
-import { HoldControls } from "./input.js";
-import { GardenSound } from "./audio.js";
-import { loadAssets, GardenRenderer } from "./renderer.js";
+import { GardenModel } from "./model.js?v=20261025-2";
+import { HoldControls } from "./input.js?v=20261025-2";
+import { GardenSound } from "./audio.js?v=20261025-2";
+import { loadAssets, GardenRenderer } from "./renderer.js?v=20261025-2";
+import { LEVELS, validLevel } from "./config.js?v=20261025-2";
 
 const $ = (id) => document.getElementById(id);
 const store = {
@@ -24,8 +25,41 @@ const sound = new GardenSound(store.get("ac-sound", "on") !== "off");
 let renderer,
   last = performance.now(),
   oldState = "",
-  best = Math.max(0, Number(store.get("ac-garden-best", 0)) || 0),
+  selectedLevel = validLevel(store.get("ac-garden-level", "gentle")),
+  bests = Object.fromEntries(
+    Object.keys(LEVELS).map((level) => [
+      level,
+      Math.max(
+        0,
+        Number(
+          store.get(
+            `ac-garden-best-${level}`,
+            level === "gentle" ? store.get("ac-garden-best", 0) : 0,
+          ),
+        ) || 0,
+      ),
+    ]),
+  ),
   toastTimer;
+
+function showLevel() {
+  for (const button of document.querySelectorAll("[data-level]"))
+    button.setAttribute(
+      "aria-pressed",
+      String(button.dataset.level === selectedLevel),
+    );
+  $("level-note").textContent = LEVELS[selectedLevel].description;
+  $("level-name").textContent = LEVELS[selectedLevel].label;
+  $("title-best").textContent = String(bests[selectedLevel]).padStart(3, "0");
+}
+for (const button of document.querySelectorAll("[data-level]"))
+  button.addEventListener("click", () => {
+    if (model.state !== "TITLE") return;
+    selectedLevel = validLevel(button.dataset.level);
+    store.set("ac-garden-level", selectedLevel);
+    sound.effect("button");
+    showLevel();
+  });
 
 function toast(message) {
   $("toast").textContent = message;
@@ -47,13 +81,17 @@ function sync() {
   $("time").parentElement.classList.toggle("urgent", model.remaining <= 5);
   $("play-hint").hidden = state !== "PLAYING" || model.elapsed > 4;
   if (state === oldState) return;
+  const activeLevel = state === "TITLE" ? selectedLevel : model.level;
+  let best = bests[activeLevel];
   if (state === "RESULT") {
     const record = model.score > best;
     if (record) {
       best = model.score;
-      store.set("ac-garden-best", best);
+      bests[activeLevel] = best;
+      store.set(`ac-garden-best-${activeLevel}`, best);
     }
     $("record-label").textContent = record ? "NEW BEST! ♡" : "BEST";
+    $("result-level").textContent = LEVELS[activeLevel].label;
     $("result-score").textContent = model.score;
     $("result-counts").textContent =
       `いちご ${model.counts.strawberry}こ ／ パイ ${model.counts.chocopie}こ ／ おさかな ${model.counts.fish}こ`;
@@ -74,6 +112,8 @@ function sync() {
   $("pause").hidden = state !== "PLAYING";
   for (const id of ["best", "title-best", "result-best"])
     $(id).textContent = String(best).padStart(3, "0");
+  $("level-name").textContent = LEVELS[activeLevel].label;
+  if (state === "TITLE") showLevel();
   if (oldState) {
     const target = { TITLE: "start", PAUSED: "resume", RESULT: "retry" }[state];
     if (target) $(target).focus({ preventScroll: true });
@@ -84,9 +124,9 @@ function start() {
   if (!renderer) return;
   controls.reset();
   renderer.reset();
-  model.start();
+  model.start(selectedLevel);
   last = performance.now();
-  sound.play();
+  sound.play({ restart: true });
   sound.effect("button");
   sync();
 }
@@ -150,20 +190,27 @@ $("share").addEventListener("click", async () => {
   sound.effect("button");
   const text = `あっちゃんのおやつキャッチ！\n${model.score}点！ いちごを${model.counts.strawberry}こ、チョコパイを${model.counts.chocopie}こ食べたよ ♡\nおさかなをよけて、きみもチャレンジ！`;
   const url = location.href.split("?")[0].split("#")[0];
+  const levelText = LEVELS[model.level].label;
   try {
     if (navigator.share) {
-      await navigator.share({ title: "あっちゃんのおやつキャッチ", text, url });
+      await navigator.share({
+        title: "あっちゃんのおやつキャッチ",
+        text: `${levelText}でチャレンジ！\n${text}`,
+        url,
+      });
       return;
     }
   } catch (error) {
     if (error.name === "AbortError") return;
   }
   try {
-    await navigator.clipboard.writeText(`${text}\n${url}`);
+    await navigator.clipboard.writeText(
+      `${levelText}でチャレンジ！\n${text}\n${url}`,
+    );
     toast("結果とURLをコピーしたよ ♡");
   } catch {
     const area = document.createElement("textarea");
-    area.value = `${text}\n${url}`;
+    area.value = `${levelText}でチャレンジ！\n${text}\n${url}`;
     area.style.cssText = "position:fixed;opacity:0;top:0";
     document.body.append(area);
     area.select();

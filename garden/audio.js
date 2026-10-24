@@ -1,4 +1,4 @@
-import { GARDEN as C } from "./config.js";
+import { GARDEN as C } from "./config.js?v=20261025-2";
 
 export class GardenSound {
   constructor(enabled) {
@@ -72,10 +72,24 @@ export class GardenSound {
         this.note(n, i * 0.11, 0.22, 0.6),
       );
   }
-  play() {
+  play({ restart = false } = {}) {
     clearInterval(this.fade);
     this.unlock();
     this.active = true;
+    if (restart) {
+      this.bgm.pause();
+      try {
+        this.bgm.currentTime = 0;
+      } catch {
+        this.bgm.addEventListener(
+          "loadedmetadata",
+          () => {
+            this.bgm.currentTime = 0;
+          },
+          { once: true },
+        );
+      }
+    }
     if (!this.enabled) return;
     this.bgm.volume = C.bgmVolume;
     this.bgm.play().catch(() => {});
